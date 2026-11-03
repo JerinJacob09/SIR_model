@@ -12,11 +12,11 @@ HOW TO RUN
 
 3. Install the libraries (only needed once):
 
-       pip install -r requirements.txt
+    pip install -r requirements.txt
 
 4. Run the program:
 
-       python sir_model.py
+    python sir_model.py
 
 5. Type the answers when asked and press Enter after each one.
    Five graphs are saved as PNG files in the same folder and also shown on screen.
@@ -97,7 +97,7 @@ Part 3: Peak of the epidemic (derivatives, Unit III)
 
 Part 4: Total infected (integrals, Unit IV)
   Total infection-days = integral of I(t) dt from 0 to T   (area under the red curve)
-  People newly infected = integral of beta*S*I/N dt = S(0) - S(T)
+  People ever infected = integral of beta*S*I/N dt = N - S(T) - R(0)
   Both are computed with the trapezoidal rule.
 
 Part 5: Flatten the curve

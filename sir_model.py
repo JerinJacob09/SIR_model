@@ -1,5 +1,3 @@
-# SIR epidemic model micro-project (Micro-Project 13). See README.md.
-# Only plain-language inputs are asked. beta and gamma are worked out inside.
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
@@ -7,7 +5,7 @@ import sympy as sp
 
 
 def ask(prompt, cast=float, min_value=None, max_value=None):
-    """Keep asking until the user types a valid number."""
+    #Keep asking until the user types a valid number.
     while True:
         text = input(prompt).strip()
         try:
@@ -64,10 +62,6 @@ plt.savefig("1_logistic_growth.png", dpi=150)
 #   dS/dt = -beta*S*I/N
 #   dI/dt =  beta*S*I/N - gamma*I
 #   dR/dt =  gamma*I
-# The user is NOT asked for beta or gamma. They are found from:
-#   gamma = 1 / (days a person stays infectious)
-#   beta  = R0 * gamma      (R0 = people one sick person infects)
-# The simulation length is automatic (runs until the epidemic is over).
 # -------------------------------------------------------------
 print("\n=== PART 2: Epidemic spread (SIR model) ===")
 N = ask("Total population (e.g. 1000): ", int, min_value=2)
@@ -125,7 +119,7 @@ plt.tight_layout()
 plt.savefig("2_sir_curves.png", dpi=150)
 
 # -------------------------------------------------------------
-# PART 3: Peak of the epidemic using derivatives (Unit III)
+# PART 3: Peak of the epidemic using derivatives 
 #   dI/dt = 0  ->  I*(beta*S/N - gamma) = 0  ->  S = N*gamma/beta
 # -------------------------------------------------------------
 S_at_peak = N * gamma / beta
@@ -153,7 +147,7 @@ plt.savefig("3_peak_derivative.png", dpi=150)
 # -------------------------------------------------------------
 # PART 4: Total infected using integration (Unit IV)
 #   area under I(t)           = total infection-days
-#   integral of new infections = S(0) - S(T)
+#   integral of new infections = N - S(T) - R(0)
 # -------------------------------------------------------------
 trap = getattr(np, "trapezoid", None) or np.trapz
 infection_days = trap(I, days)
@@ -161,7 +155,7 @@ total_infected_integral = trap(beta * S * I / N, days)
 print("\n--- Total infected (integral of I) ---")
 print(f"Area under I(t) (total infection-days) = {infection_days:.1f}")
 print(f"Integral of new infections = {total_infected_integral:.1f}")
-print(f"Check S(start) - S(end) = {S0 - S[-1]:.1f}")
+print(f"Check N - S(end) - R(0) = {N - S[-1] - R_init:.1f}")
 
 plt.figure(figsize=(8, 4))
 plt.plot(days, I, color="red")
