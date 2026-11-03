@@ -25,6 +25,7 @@ def save_and_show(filename):
     print(f"Saved {filename}. Close the graph window to continue.")
     plt.show()
 
+#Population growth
 print("=== Population growth ===")
 P0 = ask("Starting population : ", float, min_value=1)
 K_val = ask("Maximum population the area can support : ", float, min_value=P0 + 1)
@@ -62,11 +63,12 @@ plt.grid(alpha=0.3)
 plt.tight_layout()
 save_and_show("1_logistic_growth.png")
 
-print("\n=== Epidemic spread (SIR model) ===")
-N = ask("Total population (e.g. 1000): ", int, min_value=2)
-I0 = ask("Number of people infected at the start (e.g. 1): ", int, min_value=1, max_value=N - 1)
-infectious_days = ask("How many days does a sick person stay infectious? (e.g. 10): ", float, min_value=1)
-R0_num = ask("On average, how many people does one sick person infect? (e.g. 3): ", float, min_value=0.1)
+#Epidemic spread
+print("\n=== Epidemic spread ===")
+N = ask("Total population : ", int, min_value=2)
+I0 = ask("Number of people infected at the start : ", int, min_value=1, max_value=N - 1)
+infectious_days = ask("How many days does a sick person stay infectious? : ", float, min_value=1)
+R0_num = ask("On average, how many people does one sick person infect? : ", float, min_value=0.1)
 
 gamma = 1 / infectious_days
 beta = R0_num * gamma
@@ -106,6 +108,8 @@ plt.grid(alpha=0.3)
 plt.tight_layout()
 plt.xlim(0, end_day)
 save_and_show("2_sir_curves.png")
+
+#Peak of epidemic
 print("\n--- Peak of epidemic (dI/dt = 0) ---")
 S_at_peak = N * gamma / beta
 peak_idx = np.argmax(I)
@@ -128,6 +132,8 @@ plt.grid(alpha=0.3)
 plt.tight_layout()
 plt.xlim(0, end_day)
 save_and_show("3_peak_derivative.png")
+
+#Infections during the simulated period
 print("\n--- Infections during the simulated period ---")
 infection_days = (R[-1] - R_init) / gamma
 new_infections = S0 - S[-1]
@@ -147,6 +153,8 @@ plt.grid(alpha=0.3)
 plt.tight_layout()
 plt.xlim(0, end_day)
 save_and_show("4_integral_area.png")
+
+#Flatten the curve
 print("\n=== Flatten the curve ===")
 plt.figure(figsize=(8, 5))
 for c in (0, 25, 50, 70):
