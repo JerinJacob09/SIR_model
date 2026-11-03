@@ -6,7 +6,24 @@ from scipy.integrate import odeint
 import sympy as sp
 
 
-def ask(prompt, min_value=None, max_value=None):
+def aski(prompt, min_value=None, max_value=None):
+    """Keep asking until the user types a valid number."""
+    while True:
+        text = input(prompt).strip()
+        try:
+            value = float(text)
+        except ValueError:
+            print("  Please enter a valid number.")
+            continue
+        if min_value is not None and value < min_value:
+            print(f"  Value must be at least {min_value}.")
+            continue
+        if max_value is not None and value > max_value:
+            print(f"  Value must be at most {max_value}.")
+            continue
+        return value
+
+def askf(prompt, min_value=None, max_value=None):
     """Keep asking until the user types a valid number."""
     while True:
         text = input(prompt).strip()
@@ -32,9 +49,9 @@ def ask(prompt, min_value=None, max_value=None):
 # The time axis is chosen automatically (until P reaches 99% of K).
 # -------------------------------------------------------------
 print("=== PART 1: Population growth ===")
-P0 = ask("Starting population (e.g. 10): ",min_value=1)
-K_val = ask("Maximum population the area can support (e.g. 1000): ",min_value=P0 + 1)
-growth_pct = ask("Growth per day when the population is small, in % (e.g. 50): ",min_value=0.01)
+P0 = askf("Starting population (e.g. 10): ",min_value=1)
+K_val = askf("Maximum population the area can support (e.g. 1000): ",min_value=P0 + 1)
+growth_pct = askf("Growth per day when the population is small, in % (e.g. 50): ",min_value=0.01)
 r_val = growth_pct / 100
 
 t_s = sp.symbols("t")
@@ -70,10 +87,10 @@ plt.savefig("1_logistic_growth.png", dpi=150)
 # The simulation length is automatic (runs until the epidemic is over).
 # -------------------------------------------------------------
 print("\n=== PART 2: Epidemic spread (SIR model) ===")
-N = ask("Total population (e.g. 1000): ", int, min_value=2)
-I0 = ask("Number of people infected at the start (e.g. 1): ", int, min_value=1, max_value=N - 1)
-infectious_days = ask("How many days does a sick person stay infectious? (e.g. 10): ", float, min_value=1)
-R0_num = ask("On average, how many people does one sick person infect? (e.g. 3): ", float, min_value=0.1)
+N = aski("Total population (e.g. 1000): ", min_value=2)
+I0 = aski("Number of people infected at the start (e.g. 1): ", min_value=1, max_value=N - 1)
+infectious_days = askf("How many days does a sick person stay infectious? (e.g. 10): ", min_value=1)
+R0_num = askf("On average, how many people does one sick person infect? (e.g. 3): ", min_value=0.1)
 
 gamma = 1 / infectious_days
 beta = R0_num * gamma
