@@ -6,12 +6,12 @@ from scipy.integrate import odeint
 import sympy as sp
 
 
-def ask(prompt, cast=float, min_value=None, max_value=None):
+def ask(prompt, min_value=None, max_value=None):
     """Keep asking until the user types a valid number."""
     while True:
         text = input(prompt).strip()
         try:
-            value = cast(text)
+            value = float(text)
         except ValueError:
             print("  Please enter a valid number.")
             continue
@@ -32,9 +32,9 @@ def ask(prompt, cast=float, min_value=None, max_value=None):
 # The time axis is chosen automatically (until P reaches 99% of K).
 # -------------------------------------------------------------
 print("=== PART 1: Population growth ===")
-P0 = ask("Starting population (e.g. 10): ", float, min_value=1)
-K_val = ask("Maximum population the area can support (e.g. 1000): ", float, min_value=P0 + 1)
-growth_pct = ask("Growth per day when the population is small, in % (e.g. 50): ", float, min_value=0.01)
+P0 = ask("Starting population (e.g. 10): ",min_value=1)
+K_val = ask("Maximum population the area can support (e.g. 1000): ",min_value=P0 + 1)
+growth_pct = ask("Growth per day when the population is small, in % (e.g. 50): ",min_value=0.01)
 r_val = growth_pct / 100
 
 t_s = sp.symbols("t")
