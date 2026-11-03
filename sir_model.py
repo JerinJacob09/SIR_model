@@ -1,15 +1,34 @@
+# SIR epidemic model micro-project (Micro-Project 13). See README.md.
+# Only plain-language inputs are asked. beta and gamma are worked out inside.
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 import sympy as sp
 
 
-def ask(prompt, cast=float, min_value=None, max_value=None):
-    #Keep asking until the user types a valid number.
+def aski(prompt, min_value=None, max_value=None):
+    """Keep asking until the user types a valid number."""
     while True:
         text = input(prompt).strip()
         try:
-            value = cast(text)
+            value = float(text)
+        except ValueError:
+            print("  Please enter a valid number.")
+            continue
+        if min_value is not None and value < min_value:
+            print(f"  Value must be at least {min_value}.")
+            continue
+        if max_value is not None and value > max_value:
+            print(f"  Value must be at most {max_value}.")
+            continue
+        return value
+
+def askf(prompt, min_value=None, max_value=None):
+    """Keep asking until the user types a valid number."""
+    while True:
+        text = input(prompt).strip()
+        try:
+            value = float(text)
         except ValueError:
             print("  Please enter a valid number.")
             continue
@@ -30,9 +49,9 @@ def ask(prompt, cast=float, min_value=None, max_value=None):
 # The time axis is chosen automatically (until P reaches 99% of K).
 # -------------------------------------------------------------
 print("=== PART 1: Population growth ===")
-P0 = ask("Starting population (e.g. 10): ", float, min_value=1)
-K_val = ask("Maximum population the area can support (e.g. 1000): ", float, min_value=P0 + 1)
-growth_pct = ask("Growth per day when the population is small, in % (e.g. 50): ", float, min_value=0.01)
+P0 = askf("Starting population (e.g. 10): ",min_value=1)
+K_val = askf("Maximum population the area can support (e.g. 1000): ",min_value=P0 + 1)
+growth_pct = askf("Growth per day when the population is small, in % (e.g. 50): ",min_value=0.01)
 r_val = growth_pct / 100
 
 t_s = sp.symbols("t")
@@ -62,12 +81,16 @@ plt.savefig("1_logistic_growth.png", dpi=150)
 #   dS/dt = -beta*S*I/N
 #   dI/dt =  beta*S*I/N - gamma*I
 #   dR/dt =  gamma*I
+# The user is NOT asked for beta or gamma. They are found from:
+#   gamma = 1 / (days a person stays infectious)
+#   beta  = R0 * gamma      (R0 = people one sick person infects)
+# The simulation length is automatic (runs until the epidemic is over).
 # -------------------------------------------------------------
 print("\n=== PART 2: Epidemic spread (SIR model) ===")
-N = ask("Total population (e.g. 1000): ", int, min_value=2)
-I0 = ask("Number of people infected at the start (e.g. 1): ", int, min_value=1, max_value=N - 1)
-infectious_days = ask("How many days does a sick person stay infectious? (e.g. 10): ", float, min_value=1)
-R0_num = ask("On average, how many people does one sick person infect? (e.g. 3): ", float, min_value=0.1)
+N = aski("Total population (e.g. 1000): ", min_value=2)
+I0 = aski("Number of people infected at the start (e.g. 1): ", min_value=1, max_value=N - 1)
+infectious_days = askf("How many days does a sick person stay infectious? (e.g. 10): ", min_value=1)
+R0_num = askf("On average, how many people does one sick person infect? (e.g. 3): ", min_value=0.1)
 
 gamma = 1 / infectious_days
 beta = R0_num * gamma
@@ -119,7 +142,7 @@ plt.tight_layout()
 plt.savefig("2_sir_curves.png", dpi=150)
 
 # -------------------------------------------------------------
-# PART 3: Peak of the epidemic using derivatives 
+# PART 3: Peak of the epidemic using derivatives (Unit III)
 #   dI/dt = 0  ->  I*(beta*S/N - gamma) = 0  ->  S = N*gamma/beta
 # -------------------------------------------------------------
 S_at_peak = N * gamma / beta
@@ -147,7 +170,7 @@ plt.savefig("3_peak_derivative.png", dpi=150)
 # -------------------------------------------------------------
 # PART 4: Total infected using integration (Unit IV)
 #   area under I(t)           = total infection-days
-#   integral of new infections = N - S(T) - R(0)
+#   integral of new infections = S(0) - S(T)
 # -------------------------------------------------------------
 trap = getattr(np, "trapezoid", None) or np.trapz
 infection_days = trap(I, days)
@@ -155,7 +178,7 @@ total_infected_integral = trap(beta * S * I / N, days)
 print("\n--- Total infected (integral of I) ---")
 print(f"Area under I(t) (total infection-days) = {infection_days:.1f}")
 print(f"Integral of new infections = {total_infected_integral:.1f}")
-print(f"Check N - S(end) - R(0) = {N - S[-1] - R_init:.1f}")
+print(f"Check S(start) - S(end) = {S0 - S[-1]:.1f}")
 
 plt.figure(figsize=(8, 4))
 plt.plot(days, I, color="red")
