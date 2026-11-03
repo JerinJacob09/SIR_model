@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 import sympy as sp
 
-
 def ask(prompt, cast=float, min_value=None, max_value=None):
     while True:
         try:
@@ -21,14 +20,11 @@ def ask(prompt, cast=float, min_value=None, max_value=None):
         else:
             return value
 
-
 def save_and_show(filename):
     plt.savefig(filename, dpi=150)
     print(f"Saved {filename}. Close the graph window to continue.")
     plt.show()
 
-
-# Population growth (logistic model)
 print("=== Population growth ===")
 P0 = ask("Starting population : ", float, min_value=1)
 K_val = ask("Maximum population the area can support : ", float, min_value=P0 + 1)
@@ -66,7 +62,6 @@ plt.grid(alpha=0.3)
 plt.tight_layout()
 save_and_show("1_logistic_growth.png")
 
-# Epidemic spread (SIR model)
 print("\n=== Epidemic spread (SIR model) ===")
 N = ask("Total population (e.g. 1000): ", int, min_value=2)
 I0 = ask("Number of people infected at the start (e.g. 1): ", int, min_value=1, max_value=N - 1)
@@ -78,21 +73,17 @@ beta = R0_num * gamma
 R_init = 0
 S0 = N - I0 - R_init
 
-
 def sir(y, t, beta, gamma, N):
     S, I, R = y
     return [-beta * S * I / N, beta * S * I / N - gamma * I, gamma * I]
-
 
 def run(b, T=365):
     days = np.linspace(0, T, T * 10 + 1)
     S, I, R = odeint(sir, [S0, I0, R_init], days, args=(b, gamma, N)).T
     return days, S, I, R
 
-
 days, S, I, R = run(beta)
 
-# Last day when infections are still above 1% of the peak (used to zoom the graphs)
 end_day = days[np.where(I > 0.01 * I.max())[0][-1]]
 
 print(f"\nWorked out inside the model: gamma = 1/{infectious_days:g} = {gamma:.4f}, "
@@ -115,9 +106,6 @@ plt.grid(alpha=0.3)
 plt.tight_layout()
 plt.xlim(0, end_day)
 save_and_show("2_sir_curves.png")
-
-
-# Peak of epidemic
 print("\n--- Peak of epidemic (dI/dt = 0) ---")
 S_at_peak = N * gamma / beta
 peak_idx = np.argmax(I)
@@ -140,8 +128,6 @@ plt.grid(alpha=0.3)
 plt.tight_layout()
 plt.xlim(0, end_day)
 save_and_show("3_peak_derivative.png")
-
-# Total infected using integration 
 print("\n--- Infections during the simulated period ---")
 infection_days = (R[-1] - R_init) / gamma
 new_infections = S0 - S[-1]
@@ -161,8 +147,6 @@ plt.grid(alpha=0.3)
 plt.tight_layout()
 plt.xlim(0, end_day)
 save_and_show("4_integral_area.png")
-
-# Flatten the curve
 print("\n=== Flatten the curve ===")
 plt.figure(figsize=(8, 5))
 for c in (0, 25, 50, 70):
@@ -180,5 +164,4 @@ plt.legend()
 plt.grid(alpha=0.3)
 plt.tight_layout()
 save_and_show("5_flatten_curve.png")
-
 print("\nDone. All 5 graphs were saved as PNG files.")
