@@ -67,7 +67,7 @@ plt.tight_layout()
 save_and_show("1_logistic_growth.png")
 
 # Epidemic spread (SIR model)
-print("\n=== PART 2: Epidemic spread (SIR model) ===")
+print("\n=== Epidemic spread (SIR model) ===")
 N = ask("Total population (e.g. 1000): ", int, min_value=2)
 I0 = ask("Number of people infected at the start (e.g. 1): ", int, min_value=1, max_value=N - 1)
 infectious_days = ask("How many days does a sick person stay infectious? (e.g. 10): ", float, min_value=1)
