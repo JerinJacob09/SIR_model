@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 import os
 
-
 days = np.linspace(0, 365, 3651)
 run_number = 1
 
@@ -42,10 +41,11 @@ while True:
         return [-infections, infections - recoveries, recoveries]
 
     S, I, R = odeint(sir, [S0, I0, 0], days).T
-    infection_days = np.trapezoid(I, days)
-    new_infections = np.trapezoid(beta * S * I / N, days)
 
-    print(f"\ngamma = {gamma:.4f}, beta = {beta:.4f}")
+    infection_days = R[-1] / gamma
+    new_infections = S0 - S[-1]
+
+    print(f"\ngamma = {gamma:.4f}, beta = {beta:.4f}") 
     print(f"Infection-days during simulation = {infection_days:.1f}")
     print(f"New infections during simulation = {new_infections:.1f}")
 
