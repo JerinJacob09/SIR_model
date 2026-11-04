@@ -8,17 +8,20 @@ run_number = 1
 
 while True:
     os.system('cls' if os.name == 'nt' else 'clear')
-    print("=== Population growth ===")
-    P0 = float(input("Starting population: "))
-    K = float(input("Carrying capacity: "))
-    growth_rate = float(input("Growth rate per day (%): ")) / 100
+    try:
+        print("=== Population growth ===")
+        P0 = float(input("Starting population: "))
+        K = float(input("Carrying capacity: "))
+        growth_rate = float(input("Growth rate per day (%): ")) / 100
 
-    print("\n=== SIR epidemic ===")
-    N = int(input("Total population: "))
-    I0 = int(input("Initially infected: "))
-    infectious_days = float(input("Infectious period in days: "))
-    R0 = float(input("Average people infected by one person (R0): "))
-
+        print("\n=== SIR epidemic ===")
+        N = int(input("Total population: "))
+        I0 = int(input("Initially infected: "))
+        infectious_days = float(input("Infectious period in days: "))
+        R0 = float(input("Average people infected by one person (R0): "))
+    except ValueError:
+        input("\nError: Please enter valid numbers only. Press Enter to try again.")
+        continue
     if (not np.all(np.isfinite([P0, K, growth_rate, N, I0, infectious_days, R0]))
             or P0 <= 0 or K <= P0 or growth_rate <= 0 or N < 2
             or not 0 < I0 < N or infectious_days <= 0 or R0 <= 0):
